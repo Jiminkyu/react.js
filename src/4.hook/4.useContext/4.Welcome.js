@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react"
+import {createContext, useContext, useState } from 'react'
 import './1.style.css'
 
 const ThemeContext = createContext(null)
@@ -10,7 +10,7 @@ export default function Welcome() {
 
     return (
         <ThemeContext.Provider value={theme}>
-            <CurrentUserContext.Provider vlaue={{currentUser, setCurrentUser}}>
+            <CurrentUserContext.Provider value={{currentUser, setCurrentUser}}>
                 <WelcomePanel/><br/>
                 <label>
                     <input type='checkbox'
@@ -24,6 +24,7 @@ export default function Welcome() {
 }
 
 function WelcomePanel() {
+    // 구조분해할당이라 {} 가 필요하다.
     const {currentUser} = useContext(CurrentUserContext)
 
     return (
@@ -35,12 +36,60 @@ function WelcomePanel() {
 
 function Panel({title, children}) {
     const theme = useContext(ThemeContext)
-    const classname = 'panel-' + theme
+    const className = 'panel-' + theme
 
     return (
         <section className={className}>
             <h1>{title}</h1>
             {children}
         </section>
+    )
+}
+// 조회기능만
+function Greeting() {
+    const {currentUser} = useContext(CurrentUserContext)
+    return <p>you logged in as {currentUser.username}</p>
+}
+//정보를 사용한다
+function LoginForm() {
+    const {setCurrentUser} = useContext(CurrentUserContext)
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const isVal = firstName && lastName
+
+    return (
+        <>
+            <label>
+                first name{': '}
+                <input required
+                    value={firstName}
+                    onChange={e => setFirstName(e.target.value)}/>
+            </label><br/>
+            <label>
+                last name{': '}
+                <input required
+                    value={lastName}
+                    onChange={e => setLastName(e.target.value)}/>
+            </label><br/>
+            <Button disabled={!isVal}
+                onClick={() => setCurrentUser({
+                    username: firstName + ' ' + lastName
+                })}>
+                log in
+            </Button>
+        </>
+    )
+}
+
+function Button({disabled, onClick, children}) {
+    const theme = useContext(ThemeContext)
+    const className = 'button-' + theme
+
+    return (
+        <button className={className}
+            disabled={disabled}
+            onClick={onClick}>
+            {children}
+        </button>
     )
 }
